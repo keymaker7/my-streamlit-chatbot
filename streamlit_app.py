@@ -2,12 +2,53 @@ import streamlit as st
 import google.generativeai as genai
 import os
 
-# Streamlit 페이지의 제목과 아이콘을 설정합니다.
+# --- 페이지 기본 설정 ---
 st.set_page_config(
     page_title="인권 지킴이 AI 챗봇",
     page_icon="⚖️",
+    layout="centered",
+    initial_sidebar_state="auto",
 )
 
+# --- UI 수정을 위한 CSS 스타일 ---
+st.markdown("""
+<style>
+    /* 전체 배경 및 폰트 설정 */
+    body {
+        font-family: 'Pretendard', sans-serif;
+    }
+    
+    /* 챗봇 컨테이너 디자인 */
+    [data-testid="stAppViewContainer"] > .main {
+        background-color: #f0f2f6;
+    }
+
+    /* 채팅 메시지 디자인 */
+    [data-testid="stChatMessage"] {
+        border-radius: 20px;
+        padding: 1rem 1.25rem;
+        margin: 0.5rem 0;
+    }
+
+    /* 채팅 입력창 디자인 */
+    [data-testid="stChatInput"] {
+        background-color: #FFFFFF;
+    }
+    
+    /* 하단 정보 문구 스타일 */
+    .footer {
+        position: fixed;
+        right: 10px;
+        bottom: 10px;
+        color: grey;
+        font-size: 0.8em;
+        text-align: right;
+    }
+</style>
+""", unsafe_allow_html=True)
+
+
+# --- API 키 설정 ---
 # Streamlit의 Secrets 관리 기능을 통해 API 키를 불러옵니다.
 try:
     genai.configure(api_key=st.secrets["GEMINI_API_KEY"])
@@ -16,6 +57,7 @@ except Exception as e:
     st.stop()
 
 
+# --- AI 모델 및 프롬프트 설정 ---
 # AI 챗봇의 역할과 규칙을 정의하는 '마스터 프롬프트'
 MASTER_PROMPT = """
 너는 대한민국의 초등학교 5학년 학생들을 위한 '인권 지킴이 AI 챗봇'이야. 학생의 눈높이에서 인권 침해 사례를 분석하고 설명하는 임무를 맡고 있어. 다음 규칙을 반드시 지켜줘.
@@ -64,3 +106,6 @@ if prompt := st.chat_input("여기에 사례를 입력하세요..."):
             response_text = response.text
             st.markdown(response_text)
             st.session_state.messages.append({"role": "assistant", "content": response_text})
+
+# --- 하단 정보 문구 추가 ---
+st.markdown('<div class="footer">디지털 기반 학생 맞춤교육, AI정보교육 중심학교 효행초등학교 - 김종윤</div>', unsafe_allow_html=True)
